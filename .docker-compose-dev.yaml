@@ -1,0 +1,39 @@
+# Docker Compose Configuration
+# visit https://docs.docker.com/compose/
+
+version: '3.8'
+services:
+  # app service for your backend
+  vexo-backend:
+    container_name: vexo-backend-dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: development
+      PORT: 8000
+      DB_URI: mongodb://vexo-database:27017/Vexo
+      JWT_SECRET: vexo
+    depends_on:
+      - vexo-database
+    links:
+      - "vexo-database"
+
+  vexo-nginx:
+    restart: always
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+            
+  vexo-database:
+    image: mongo
+    container_name: vexo-mongodb-dev
+    restart: always
+    volumes:
+      - ./mongorestore.sh:/docker-entrypoint-initdb.d/mongorestore.sh
+      - ./dump:/dump
