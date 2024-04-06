@@ -29,7 +29,7 @@ services:
       context: ./nginx
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "8080:80"
             
   vexo-database:
     image: mongo
