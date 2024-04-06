@@ -1,19 +1,38 @@
 {
   "env": {
-    "es2021": true,
+    "es2022": true,
     "node": true
   },
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": "latest",
+    "ecmaVersion": 2023,
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint/eslint-plugin"],
   "rules": {
-    "indent": ["error", 2],
-    "linebreak-style": ["error", "unix"],
-    "quotes": ["error", "double"],
-    "semi": ["error", "always"]
+    "@typescript-eslint/explicit-function-return-type": "error",
+    "prettier/prettier": "error"
   }
 }
+
+// module.exports = {
+//   plugins: ["@typescript-eslint/eslint-plugin"],
+//   extends: [
+//     "plugin:@typescript-eslint/recommended",
+//     "plugin:prettier/recommended",
+//   ],
+//   root: true,
+//   env: {
+//     node: true,
+//     jest: true,
+//   },
+//   ignorePatterns: [".eslintrc.js"],
+//   rules: {
+//     "@typescript-eslint/explicit-function-return-type": "error",
+//     "prettier/prettier": "error",
+//   },
+// };

@@ -1,13 +1,15 @@
 import { InferSchemaType, model, Schema, Types } from "mongoose";
-
-enum UserType {
-  ADMIN = "admin",
-  SUPPORT = "support",
-  DEFAULT = "default",
-}
+import { UserType } from "./types";
 
 const userSchema = new Schema(
   {
+    cpf: {
+      type: String,
+      index: true,
+    },
+    hashedPassword: {
+      type: String,
+    },
     firstName: {
       type: String,
     },
@@ -17,24 +19,42 @@ const userSchema = new Schema(
     personalEmail: {
       type: String,
     },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationCode: {
+      type: String,
+      default: "",
+    },
     phone: {
       type: String,
+    },
+    phoneVerified: {
+      type: Boolean,
+      default: false,
+    },
+    phoneVerificationCode: {
+      type: String,
+      default: "",
     },
     nacionality: {
       type: String,
     },
-    CPF: {
+    birthState: {
       type: String,
-      index: true,
     },
-    birthday: {
+    birthDate: {
       type: Date,
     },
     gender: {
       type: String,
     },
-    civilStatus: {
+    maritalStatus: {
       type: String,
+    },
+    numberOfChildren: {
+      type: Number,
     },
     children: [
       {
@@ -46,20 +66,38 @@ const userSchema = new Schema(
       type: Types.ObjectId,
       ref: "User",
     },
+    addresses: [
+      {
+        type: Types.ObjectId,
+        ref: "Address",
+      },
+    ],
     address: {
       type: Types.ObjectId,
       ref: "Address",
     },
     employmentRelationHistory: [
       {
-        type: Types.ObjectId,
-        ref: "EmploymentRelation",
+        employmentRelation: {
+          type: Types.ObjectId,
+          ref: "EmploymentRelation",
+        },
+        company: {
+          type: Types.ObjectId,
+          ref: "Company",
+        },
       },
     ],
     activeEmploymentRelations: [
       {
-        type: Types.ObjectId,
-        ref: "EmploymentRelation",
+        employmentRelation: {
+          type: Types.ObjectId,
+          ref: "EmploymentRelation",
+        },
+        company: {
+          type: Types.ObjectId,
+          ref: "Company",
+        },
       },
     ],
     accounts: [
@@ -74,20 +112,63 @@ const userSchema = new Schema(
         ref: "LoanAgreement",
       },
     ],
-    companies: [
+    managerPartnerCompanies: [
       {
-        type: Types.ObjectId,
-        ref: "Company",
+        company: {
+          type: Types.ObjectId,
+          ref: "Company",
+        },
+        active: {
+          type: Boolean,
+          default: true,
+        },
+        history: [
+          {
+            active: {
+              type: Boolean,
+              default: true,
+            },
+            timestamp: {
+              type: Number,
+            },
+          },
+        ],
       },
     ],
-    type: { type: String, enum: Object.values(UserType) },
-
+    managedCompanies: [
+      {
+        company: {
+          type: Types.ObjectId,
+          ref: "Company",
+        },
+        active: {
+          type: Boolean,
+          default: true,
+        },
+        history: [
+          {
+            active: {
+              type: Boolean,
+              default: true,
+            },
+            timestamp: {
+              type: Number,
+            },
+          },
+        ],
+      },
+    ],
+    userType: { type: String, enum: Object.values(UserType) },
     signatures: [
       {
         type: Types.ObjectId,
         ref: "Signature",
       },
     ],
+    optIn: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

@@ -4,26 +4,67 @@ const companySchema = new Schema(
   {
     name: {
       type: String,
+      required: true,
     },
-    CNPJ: {
+    cnpj: {
       type: String,
+      index: true,
+      required: true,
     },
     managerPartner: {
       type: Types.ObjectId,
       ref: "User",
+      required: true,
     },
+    managerPartnerStartTimestamp: {
+      type: Number,
+      required: true,
+    },
+    managerPartnerHistory: [
+      {
+        managerPartner: {
+          type: Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        startTimestamp: {
+          type: Number,
+        },
+        endTimestamp: {
+          type: Number,
+        },
+      },
+    ],
     managers: [
       {
-        type: Types.ObjectId,
-        ref: "User",
+        manager: {
+          type: Types.ObjectId,
+          ref: "User",
+        },
+        active: {
+          type: Boolean,
+          default: true,
+        },
+        history: [
+          {
+            active: {
+              type: Boolean,
+            },
+            timestamp: {
+              type: Number,
+            },
+          },
+        ],
       },
     ],
     phone: {
       type: String,
+      required: true,
     },
     address: {
       type: Types.ObjectId,
       ref: "Address",
+      required: true,
     },
     employees: [
       {
@@ -45,6 +86,7 @@ const companySchema = new Schema(
     ],
     monthlyDueDay: {
       type: Number,
+      required: true,
     },
   },
   { timestamps: true },

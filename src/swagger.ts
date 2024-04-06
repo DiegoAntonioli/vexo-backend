@@ -81,7 +81,7 @@ const routes = ["./routes/index.ts"];
 swaggerAutogen({ openapi: "3.0.0" })(
   outputFile,
   routes,
-  swaggerDefinition
+  swaggerDefinition,
 ).then(async () => {
   await require("./app");
 });

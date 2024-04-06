@@ -4,30 +4,36 @@ const addressSchema = new Schema(
   {
     postalCode: {
       type: String,
+      required: true,
     },
     street: {
       type: String,
+      required: true,
     },
     number: {
       type: String,
+      required: true,
     },
     addressLine2: {
       type: String,
     },
     neighborhood: {
       type: String,
+      required: true,
     },
     city: {
       type: String,
+      required: true,
     },
     state: {
       type: String,
+      required: true,
     },
-    userId: {
+    user: {
       type: Types.ObjectId,
       ref: "User",
     },
-    companyId: {
+    company: {
       type: Types.ObjectId,
       ref: "Company",
     },

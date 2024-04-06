@@ -15,7 +15,8 @@ const roleSchema = new Schema(
       type: Date,
     },
     activeSalary: {
-      type: Number,
+      type: Types.ObjectId,
+      ref: "Salary",
     },
     salaries: [
       {
@@ -23,6 +24,10 @@ const roleSchema = new Schema(
         ref: "Salary",
       },
     ],
+    employmentRelation: {
+      type: Types.ObjectId,
+      ref: "EmploymentRelation",
+    },
   },
   { timestamps: true },
 );

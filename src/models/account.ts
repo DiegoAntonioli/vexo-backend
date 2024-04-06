@@ -3,12 +3,9 @@ import { InferSchemaType, model, Schema, Types } from "mongoose";
 const accountSchema = new Schema(
   {
     bank: {
-      type: Types.ObjectId,
+      type: Number,
     },
     accountNumber: {
-      type: String,
-    },
-    accountVerificationDigit: {
       type: String,
     },
     agencyNumber: {
@@ -16,6 +13,10 @@ const accountSchema = new Schema(
     },
     pixKey: {
       type: String,
+    },
+    user: {
+      type: Types.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: true },
