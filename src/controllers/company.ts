@@ -605,7 +605,7 @@ export const registerCompanyEmployees: RequestHandler = async (
         accountBankNumber: data[38],
         accountNumber: data[39],
         agencyNumber: data[40],
-        pixKey: data[41].toLowerCase(),
+        pixKey: data[41].toString().toLowerCase(),
         dataIndex: index,
       };
       employees.push(employee);
