@@ -28,7 +28,7 @@ companyRouter.post(
 );
 
 companyRouter.get(
-  "/:userId/validate-company",
+  "/:companyName/validate-company",
   validateCompany,
   /*
   #swagger.parameters['companyName'] = {
