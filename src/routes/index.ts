@@ -10,7 +10,23 @@ router.get("/", (req, res) => {
 });
 
 router.use("/auth", authRouter);
-router.use("/company", companyRouter);
+router.use(
+  "/company",
+  companyRouter
+  /*
+  #swagger.tags = ['Company']
+  #swagger.responses[500] = {
+    description: "Internal server error",
+    content: {
+      "application/json": {
+        schema: {
+          $ref: '#/components/schemas/serverErrorResponse'
+        }
+      }
+    }
+  }
+  */
+);
 router.use(
   "/user",
   userRouter
