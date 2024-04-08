@@ -49,6 +49,7 @@ export const verifyChatTokenHandler: RequestHandler = async (
     }
     const token = req.headers["authorization"].replace("Bearer ", "");
     const decodedToken = verify(token, env.CHAT_JWT_SECRET);
+    console.log({ decodedToken, token });
     if (typeof decodedToken === "string") {
       throw new CustomError();
     }
