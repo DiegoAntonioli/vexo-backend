@@ -608,7 +608,7 @@ export const registerCompanyEmployees: RequestHandler = async (
         pixKey: data[41].toString().toLowerCase(),
         dataIndex: index,
       };
-      console.log({employee})
+      console.log({ employee });
       employees.push(employee);
     });
 
@@ -668,6 +668,7 @@ export const registerCompanyEmployees: RequestHandler = async (
 
     res.status(201).json({ OK: "OK", errorsData, savedEmployeeData });
   } catch (err) {
+    console.log({ err });
     next(err);
   }
 };
