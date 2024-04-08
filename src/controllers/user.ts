@@ -94,8 +94,18 @@ export const validateUser: RequestHandler = async (req, res, next) => {
 
 export const optIn: RequestHandler = async (req, res, next) => {
   try {
-    const { user } = res.locals;
     const { email } = req.body;
+    const { userCPF } = req.params;
+
+    const parsedCpf = parseAndValidateCPF({ cpf: userCPF });
+    if (!parsedCpf) {
+      throw new CustomError("Invalid CPF", 422);
+    }
+
+    const user = await UserModel.findOne({ cpf: parsedCpf });
+    if (!user) {
+      throw new CustomError("User not found", 404);
+    }
 
     if (user.optIn && user.emailVerified) {
       throw new CustomError("Email already verified", 409);
