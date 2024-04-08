@@ -608,6 +608,7 @@ export const registerCompanyEmployees: RequestHandler = async (
         pixKey: data[41].toString().toLowerCase(),
         dataIndex: index,
       };
+      console.log({employee})
       employees.push(employee);
     });
 
