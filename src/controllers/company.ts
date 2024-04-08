@@ -64,7 +64,7 @@ export const createCompany: RequestHandler = async (req, res, next) => {
         birthDate: managerPartner.birthDate,
         gender: managerPartner.gender.toLowerCase(),
         maritalStatus: managerPartner.maritalStatus.toLowerCase(),
-        numberOfChildren: managerPartner.numberOfChildren.toLowerCase(),
+        numberOfChildren: managerPartner.numberOfChildren,
         address: newAddress._id,
         userType: UserType.DEFAULT,
       });
