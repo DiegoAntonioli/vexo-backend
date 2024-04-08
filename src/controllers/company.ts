@@ -535,7 +535,7 @@ export const registerCompanyEmployees: RequestHandler = async (
 
     const workSheets = parse(
       readFileSync(
-        path.join(__dirname, "..", , "sheetSample.xlsx"),
+        path.join(__dirname, "..", "sheetSample.xlsx"),
       ),
     );
     console.log({ workSheets });
