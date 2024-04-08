@@ -8,7 +8,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: "http://localhost",
+      url: "https://server.vexocred.com",
       description: "",
     },
   ],
