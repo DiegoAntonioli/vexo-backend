@@ -935,3 +935,19 @@ export const registerCompanyEmployees: RequestHandler = async (
 //     next(err);
 //   }
 // };
+
+export const validateCompany: RequestHandler = async (req, res, next) => {
+  try {
+    const { companyName } = req.params;
+
+    const company = await CompanyModel.findOne({
+      name: companyName.toLowerCase(),
+    });
+
+    res
+      .status(200)
+      .json({ OK: "OK", companyRegistered: company ? true : false });
+  } catch (err) {
+    next(err);
+  }
+};

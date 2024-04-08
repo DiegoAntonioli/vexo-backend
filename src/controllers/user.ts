@@ -14,9 +14,9 @@ import { parseAndValidateCPF, parseAndValidatePhone } from "utils/validators";
 
 export const isUserRegistered: RequestHandler = async (req, res, next) => {
   try {
-    const { cpf } = req.body;
+    const { userCPF } = req.params;
 
-    const parsedCpf = parseAndValidateCPF({ cpf });
+    const parsedCpf = parseAndValidateCPF({ cpf: userCPF });
     if (!parsedCpf) {
       throw new CustomError("Invalid CPF", 422);
     }
@@ -32,6 +32,7 @@ export const isUserRegistered: RequestHandler = async (req, res, next) => {
       isRegistered: user.optIn,
       emailVerified: user.emailVerified,
       phoneVerified: user.phoneVerified,
+      userId: user._id,
     });
   } catch (err) {
     next(err);
@@ -40,9 +41,10 @@ export const isUserRegistered: RequestHandler = async (req, res, next) => {
 
 export const validateUser: RequestHandler = async (req, res, next) => {
   try {
-    const { cpf, email } = req.body;
+    const { email } = req.body;
+    const { userCPF } = req.params;
 
-    const parsedCpf = parseAndValidateCPF({ cpf });
+    const parsedCpf = parseAndValidateCPF({ cpf: userCPF });
     if (!parsedCpf) {
       throw new CustomError("Invalid CPF", 422);
     }
@@ -85,22 +87,6 @@ export const validateUser: RequestHandler = async (req, res, next) => {
       emailVerified: user.emailVerified,
       phoneVerified: user.phoneVerified,
     });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const validateCompany: RequestHandler = async (req, res, next) => {
-  try {
-    const { companyName } = req.body;
-
-    const company = await CompanyModel.findOne({
-      name: companyName.toLowerCase(),
-    });
-
-    res
-      .status(200)
-      .json({ OK: "OK", companyRegistered: company ? true : false });
   } catch (err) {
     next(err);
   }
@@ -273,7 +259,7 @@ export const validateUserData: RequestHandler = async (req, res, next) => {
     if (
       new Date(user.birthDate).toString() !== new Date(birthdate).toString()
     ) {
-      throw new CustomError("wrong birthDate", 409);
+      throw new CustomError("Wrong birthDate", 409);
     }
 
     let newAddress: (Address & Document) | null = null;

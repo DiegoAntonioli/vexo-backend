@@ -17,6 +17,14 @@ const swaggerDefinition = {
       name: "Auth",
       description: "Auth Endpoints",
     },
+    {
+      name: "Company",
+      description: "Company Endpoints",
+    },
+    {
+      name: "User",
+      description: "User Endpoints",
+    },
   ],
   components: {
     schemas: {
@@ -62,6 +70,95 @@ const swaggerDefinition = {
         $OK: "OK",
         $newToken:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQwODM0MjUsIl9pZCI6IjY1ZjQ4NDQ3MzkyN2ZlZGRkOTZhZjMxMSIsImlhdCI6MTcxMTQ5MTQyNX0.NWlOrFDAruzIh643x6odpw58F4HfMUq7hTlTADWgqNY",
+      },
+      // user routes
+      isUserRegisteredRes: {
+        OK: "OK",
+        isRegistered: true,
+        emailVerified: false,
+        phoneVerified: false,
+        userId: "65f4b974c6ea7db8af6172fc",
+      },
+      validateUserBody: {
+        email: "joao@hotmail.com",
+      },
+      validateUserRes: {
+        OK: "OK",
+        validated: true,
+        token:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQwODM0MjUsIl9pZCI6IjY1ZjQ4NDQ3MzkyN2ZlZGRkOTZhZjMxMSIsImlhdCI6MTcxMTQ5MTQyNX0.NWlOrFDAruzIh643x6odpw58F4HfMUq7hTlTADWgqNY",
+        isRegistered: true,
+        hasEmploymentRelations: true,
+        emailVerified: false,
+        phoneVerified: false,
+      },
+      validateCompanyBody: {
+        companyName: "Vtex",
+      },
+      validateCompanyRes: {
+        OK: "OK",
+        companyRegistered: true,
+      },
+      optInBody: {
+        email: "joao@hotmail.com",
+      },
+      optInRes: {
+        OK: "OK",
+      },
+      verifyEmailBody: {
+        code: "1234",
+      },
+      verifyEmailRes: {
+        OK: "OK",
+      },
+      patchPhoneBody: {
+        phone: "551199999-9999",
+      },
+      patchPhoneRes: {
+        OK: "OK",
+      },
+      verifyPhoneBody: {
+        code: "1234",
+      },
+      verifyPhoneRes: {
+        OK: "OK",
+      },
+      calculatorBody: {
+        value: 1000000,
+        installments: 12,
+      },
+      calculatorRes: {
+        OK: "OK",
+        simulations: [
+          {
+            value: 1000000,
+            installmentValue: 180000,
+            installments: 6,
+          },
+          {
+            value: 1000000,
+            installmentValue: 92000,
+            installments: 12,
+          },
+          {
+            value: 1000000,
+            installmentValue: 62000,
+            installments: 18,
+          },
+        ],
+      },
+      validateUserDataBody: {
+        birthdate: "1990-01-01",
+        postalCode: "1234000",
+        street: "Avenida Pacaembu",
+        addressNumber: "502",
+        addressLine2: "ap21",
+        neighborhood: "Pacaembu",
+        city: "São Paulo",
+        state: "SP",
+      },
+      validateUserDataRes: {
+        OK: "OK",
       },
     },
     securitySchemes: {
