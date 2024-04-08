@@ -590,7 +590,7 @@ export const registerCompanyEmployees: RequestHandler = async (
         nacionality: data[11].toLowerCase(),
         postalCode: data[12],
         street: data[13].toLowerCase(),
-        addressNumber: data[14].toString().toLowerCase(),
+        addressNumber: data[14] ? data[14].toString().toLowerCase() : "",
         addressLine2: data[15].toLowerCase(),
         neighborhood: data[16] ? data[16].toLowerCase() : "",
         city: data[17].toLowerCase(),
