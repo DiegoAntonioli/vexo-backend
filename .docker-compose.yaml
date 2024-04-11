@@ -18,6 +18,7 @@ services:
       DB_URI: mongodb://vexo-database:27017/Vexo
       JWT_SECRET: vexo
       CHAT_JWT_SECRET: vexo-chat
+      NODE_PATH: ./dist
     depends_on:
       - vexo-database
     links:
