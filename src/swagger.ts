@@ -150,12 +150,8 @@ const swaggerDefinition = {
       validateUserDataBody: {
         birthdate: "1990-01-01",
         postalCode: "1234000",
-        street: "Avenida Pacaembu",
         addressNumber: "502",
         addressLine2: "ap21",
-        neighborhood: "Pacaembu",
-        city: "São Paulo",
-        state: "SP",
       },
       validateUserDataRes: {
         OK: "OK",

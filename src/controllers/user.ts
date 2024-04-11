@@ -116,6 +116,16 @@ export const optIn: RequestHandler = async (req, res, next) => {
 
     // TODO send email
 
+    const token = sign(
+      {
+        exp: Math.floor(Date.now() / 1000) + 3 * 60 * 60,
+        userId: user._id,
+        cpf: parsedCpf,
+        email: email.toLowerCase(),
+      },
+      env.CHAT_JWT_SECRET,
+    );
+
     await user.save();
 
     res.status(201).json({ OK: "OK" });
@@ -258,72 +268,21 @@ export const validateUserData: RequestHandler = async (req, res, next) => {
     const {
       birthdate,
       postalCode,
-      street,
       addressNumber,
       addressLine2,
-      neighborhood,
-      city,
-      state,
     } = req.body;
 
+    const address = await AddressModel.findById(user.address.toString());
+
+    if (!address) {
+      throw new CustomError("Inconsistent data", 409);
+    }
     if (
-      new Date(user.birthDate).toString() !== new Date(birthdate).toString()
+      new Date(user.birthDate).toString() !== new Date(birthdate).toString() ||
+      address.postalCode !== postalCode ||
+      address.number !== addressNumber
     ) {
-      throw new CustomError("Wrong birthDate", 409);
-    }
-
-    let newAddress: (Address & Document) | null = null;
-    if (!user.finishedRegistration || !user.address) {
-      newAddress = new AddressModel({
-        postalCode,
-        street: street.toLowerCase(),
-        number: addressNumber.toLowerCase(),
-        addressLine2: addressLine2.toLowerCase(),
-        neighborhood: neighborhood.toLowerCase(),
-        city: city.toLowerCase(),
-        state: state.toLowerCase(),
-        user: user._id,
-      });
-      user.finishedRegistration = true;
-    } else {
-      let address = await AddressModel.findById(user.address);
-      if (!address) {
-        newAddress = new AddressModel({
-          postalCode,
-          street: street.toLowerCase(),
-          number: addressNumber.toLowerCase(),
-          addressLine2: addressLine2.toLowerCase(),
-          neighborhood: neighborhood.toLowerCase(),
-          city: city.toLowerCase(),
-          state: state.toLowerCase(),
-          user: user._id,
-        });
-      } else if (
-        address.postalCode !== postalCode ||
-        address.street !== street.toLowerCase() ||
-        address.number !== addressNumber.toLowerCase() ||
-        address.addressLine2 !== addressLine2.toLowerCase() ||
-        address.neighborhood !== neighborhood.toLowerCase() ||
-        address.city !== city.toLowerCase() ||
-        address.state !== state.toLowerCase()
-      ) {
-        user.addresses.push(user.address);
-        newAddress = new AddressModel({
-          postalCode,
-          street: street.toLowerCase(),
-          number: addressNumber.toLowerCase(),
-          addressLine2: addressLine2.toLowerCase(),
-          neighborhood: neighborhood.toLowerCase(),
-          city: city.toLowerCase(),
-          state: state.toLowerCase(),
-          user: user._id,
-        });
-      }
-    }
-
-    if (newAddress) {
-      user.address = newAddress._id;
-      await Promise.all([newAddress.save(), user.save()]);
+      throw new CustomError("Inconsistent data", 409);
     }
 
     res.status(201).json({

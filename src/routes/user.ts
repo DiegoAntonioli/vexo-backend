@@ -12,6 +12,7 @@ import {
 } from "controllers/user";
 import { Document } from "mongoose";
 import { User } from "models/user";
+import { verifyChatTokenHandler } from "middlewares/auth";
 
 const userRouter = express.Router();
 
@@ -67,13 +68,10 @@ userRouter.post(
   */
 );
 
-userRouter.patch(
+userRouter.put(
   "/:userCPF/email",
   optIn,
   /*
-  #swagger.security = [{
-    "bearerAuth": []
-  }]
   #swagger.parameters['userCPF'] = {
     in: "path",
     required: true
@@ -101,8 +99,9 @@ userRouter.patch(
   */
 );
 
-userRouter.patch(
+userRouter.put(
   "/:userCPF/verify-email",
+  verifyChatTokenHandler,
   verifyEmail,
   /*
   #swagger.security = [{
@@ -135,8 +134,9 @@ userRouter.patch(
   */
 );
 
-userRouter.patch(
+userRouter.put(
   "/:userCPF/phone",
+  verifyChatTokenHandler,
   patchPhone,
   /*
   #swagger.security = [{
@@ -169,8 +169,9 @@ userRouter.patch(
   */
 );
 
-userRouter.patch(
+userRouter.put(
   "/:userCPF/verify-phone",
+  verifyChatTokenHandler,
   verifyPhone,
   /*
   #swagger.security = [{
@@ -203,8 +204,9 @@ userRouter.patch(
   */
 );
 
-userRouter.get(
+userRouter.post(
   "/:userCPF/simulation",
+  verifyChatTokenHandler,
   calculator,
   /*
   #swagger.security = [{
@@ -237,8 +239,9 @@ userRouter.get(
   */
 );
 
-userRouter.patch(
-  "/:userCPF",
+userRouter.post(
+  "/:userCPF/verify-user",
+  verifyChatTokenHandler,
   validateUserData,
   /*
   #swagger.security = [{

@@ -61,6 +61,11 @@ export const verifyChatTokenHandler: RequestHandler = async (
     if (!user) {
       throw new CustomError("User not found", 404);
     }
+    const { userCPF } = req.params;
+    console.log({ userCPF, cpf: user.cpf });
+    if (user.cpf !== userCPF) {
+      throw new CustomError("Unauthorized", 401);
+    }
 
     res.locals.user = user;
     res.locals.hasEmploymentRelations = decodedToken.hasEmploymentRelations;

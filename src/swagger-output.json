@@ -1,1 +1,936 @@
-{}
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Vexo API Swagger Doc",
+    "description": "API for Vexo"
+  },
+  "servers": [
+    {
+      "url": "https://server.vexocred.com",
+      "description": ""
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Auth Endpoints"
+    },
+    {
+      "name": "Company",
+      "description": "Company Endpoints"
+    },
+    {
+      "name": "User",
+      "description": "User Endpoints"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auth/token": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/company/": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/company/{companyId}": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/company/{companyId}/addEmployees": {
+      "post": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/company/{companyName}/validate-company": {
+      "get": {
+        "tags": [
+          "Company"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "companyName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/validateUserRes"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/serverErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userCPF}/isRegistered": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userCPF",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/isUserRegisteredRes"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/serverErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userCPF}/validate-user": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userCPF",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/validateUserRes"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/serverErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/validateUserBody"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userCPF}/email": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userCPF",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/optInRes"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/serverErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/optInBody"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userCPF}/verify-email": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userCPF",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/verifyEmailRes"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/serverErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/verifyEmailBody"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userCPF}/phone": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userCPF",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/patchPhoneRes"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/serverErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/patchPhoneBody"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userCPF}/verify-phone": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userCPF",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/verifyPhoneRes"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/serverErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/verifyPhoneBody"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userCPF}/simulation": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userCPF",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/calculatorRes"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/serverErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/calculatorBody"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{userCPF}/verify-user": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "userCPF",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/validateUserDataRes"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/serverErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/validateUserDataBody"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "serverError": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Internal Server Error"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "err": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      },
+      "emailAlreadyInUse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Email or CPF already in use"
+          },
+          "data": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      "invalidEmailOrPassword": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Invalid email or password"
+          },
+          "data": {
+            "type": "object",
+            "properties": {}
+          }
+        }
+      },
+      "unauthorized": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "err": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      },
+      "signupBody": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "test@test.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "123456"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "signupResponse": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          },
+          "userId": {
+            "type": "string",
+            "example": "65f4b974c6ea7db8af6172fc"
+          }
+        },
+        "required": [
+          "OK",
+          "userId"
+        ]
+      },
+      "loginBody": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "admin@vexo.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "admin"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "loginResponse": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          },
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQwODM0MjUsIl9pZCI6IjY1ZjQ4NDQ3MzkyN2ZlZGRkOTZhZjMxMSIsImlhdCI6MTcxMTQ5MTQyNX0.NWlOrFDAruzIh643x6odpw58F4HfMUq7hTlTADWgqNY"
+          }
+        },
+        "required": [
+          "OK",
+          "token"
+        ]
+      },
+      "refreshTokenResponse": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          },
+          "newToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQwODM0MjUsIl9pZCI6IjY1ZjQ4NDQ3MzkyN2ZlZGRkOTZhZjMxMSIsImlhdCI6MTcxMTQ5MTQyNX0.NWlOrFDAruzIh643x6odpw58F4HfMUq7hTlTADWgqNY"
+          }
+        },
+        "required": [
+          "OK",
+          "newToken"
+        ]
+      },
+      "isUserRegisteredRes": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          },
+          "isRegistered": {
+            "type": "boolean",
+            "example": true
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "example": false
+          },
+          "phoneVerified": {
+            "type": "boolean",
+            "example": false
+          },
+          "userId": {
+            "type": "string",
+            "example": "65f4b974c6ea7db8af6172fc"
+          }
+        }
+      },
+      "validateUserBody": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "joao@hotmail.com"
+          }
+        }
+      },
+      "validateUserRes": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          },
+          "validated": {
+            "type": "boolean",
+            "example": true
+          },
+          "token": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQwODM0MjUsIl9pZCI6IjY1ZjQ4NDQ3MzkyN2ZlZGRkOTZhZjMxMSIsImlhdCI6MTcxMTQ5MTQyNX0.NWlOrFDAruzIh643x6odpw58F4HfMUq7hTlTADWgqNY"
+          },
+          "isRegistered": {
+            "type": "boolean",
+            "example": true
+          },
+          "hasEmploymentRelations": {
+            "type": "boolean",
+            "example": true
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "example": false
+          },
+          "phoneVerified": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "validateCompanyBody": {
+        "type": "object",
+        "properties": {
+          "companyName": {
+            "type": "string",
+            "example": "Vtex"
+          }
+        }
+      },
+      "validateCompanyRes": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          },
+          "companyRegistered": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "optInBody": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "joao@hotmail.com"
+          }
+        }
+      },
+      "optInRes": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          }
+        }
+      },
+      "verifyEmailBody": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "1234"
+          }
+        }
+      },
+      "verifyEmailRes": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          }
+        }
+      },
+      "patchPhoneBody": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "example": "551199999-9999"
+          }
+        }
+      },
+      "patchPhoneRes": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          }
+        }
+      },
+      "verifyPhoneBody": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "1234"
+          }
+        }
+      },
+      "verifyPhoneRes": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          }
+        }
+      },
+      "calculatorBody": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "example": 1000000
+          },
+          "installments": {
+            "type": "number",
+            "example": 12
+          }
+        }
+      },
+      "calculatorRes": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          },
+          "simulations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "example": 1000000
+                },
+                "installmentValue": {
+                  "type": "number",
+                  "example": 62000
+                },
+                "installments": {
+                  "type": "number",
+                  "example": 18
+                }
+              }
+            }
+          }
+        }
+      },
+      "validateUserDataBody": {
+        "type": "object",
+        "properties": {
+          "birthdate": {
+            "type": "string",
+            "example": "1990-01-01"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "1234000"
+          },
+          "addressNumber": {
+            "type": "string",
+            "example": "502"
+          },
+          "addressLine2": {
+            "type": "string",
+            "example": "ap21"
+          }
+        }
+      },
+      "validateUserDataRes": {
+        "type": "object",
+        "properties": {
+          "OK": {
+            "type": "string",
+            "example": "OK"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTQwOTI2MjQsIl9pZCI6IjY1ZjRiOTIwYzZlYTdkYjhhZjYxNzJmNCIsImlhdCI6MTcxMTUwMDYyNH0.p5e-YrCP3eNmDijhWAq09I30j-wTvCrYVGwqzQFo2CQ"
+      }
+    }
+  }
+}

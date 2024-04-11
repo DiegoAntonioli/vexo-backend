@@ -169,6 +169,10 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    finishedRegistration: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
