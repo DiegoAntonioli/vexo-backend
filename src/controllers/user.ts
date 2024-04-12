@@ -254,9 +254,14 @@ export const calculator: RequestHandler = async (req, res, next) => {
       installments: secondOption,
     });
 
-    res
-      .status(201)
-      .json({ OK: "OK", simulations: [option1, option2, option3] });
+    res.status(201).json({
+      OK: "OK",
+      simulations: [
+        { ...option1, index: 0, requestedValueAndInstallments: false },
+        { ...option2, index: 1, requestedValueAndInstallments: true },
+        { ...option3, index: 2, requestedValueAndInstallments: false },
+      ],
+    });
   } catch (err) {
     next(err);
   }
@@ -265,12 +270,7 @@ export const calculator: RequestHandler = async (req, res, next) => {
 export const validateUserData: RequestHandler = async (req, res, next) => {
   try {
     const { user } = res.locals;
-    const {
-      birthdate,
-      postalCode,
-      addressNumber,
-      addressLine2,
-    } = req.body;
+    const { birthdate, postalCode, addressNumber } = req.body;
 
     const address = await AddressModel.findById(user.address.toString());
 
