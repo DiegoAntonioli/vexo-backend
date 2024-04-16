@@ -115,3 +115,15 @@ export const parseAndValidateDate = ({
   }
   return null;
 };
+
+export const parseNumber = ({ number }: { number: string }): string | null => {
+  if (!number) return null;
+  number = number.toString();
+  const numberPattern = /\d+/g;
+  console.log({ number });
+  const numberMatchNumberPattern = number.match(numberPattern);
+  console.log({ numberMatchNumberPattern });
+  if (!numberMatchNumberPattern) return null;
+
+  return numberMatchNumberPattern.join("");
+};

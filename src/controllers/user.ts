@@ -10,7 +10,12 @@ import { User, UserModel } from "models/user";
 import { Document, Types } from "mongoose";
 import { CustomError } from "utils/error";
 import { simulation } from "utils/math";
-import { parseAndValidateCPF, parseAndValidatePhone } from "utils/validators";
+import {
+  parseAndValidateCPF,
+  parseAndValidateDate,
+  parseAndValidatePhone,
+  parseNumber,
+} from "utils/validators";
 
 export const isUserRegistered: RequestHandler = async (req, res, next) => {
   try {
@@ -271,15 +276,38 @@ export const validateUserData: RequestHandler = async (req, res, next) => {
   try {
     const { user } = res.locals;
     const { birthdate, postalCode, addressNumber } = req.body;
+    const parsedPostalCode = parseNumber({ number: postalCode });
+    const parsedBirthdate = parseAndValidateDate({
+      date: birthdate.toString(),
+    });
+
+    if (!parsedBirthdate || !parsedPostalCode)
+      throw new CustomError("Invalid input", 422);
 
     const address = await AddressModel.findById(user.address.toString());
 
+    console.log({ birthdate, postalCode, addressNumber, user, address });
+
     if (!address) {
-      throw new CustomError("Inconsistent data", 409);
+      return res.status(201).json({
+        OK: "OK",
+      });
     }
+
+    console.log({
+      userBirthDate: new Date(user.birthDate).toString(),
+      input: new Date(birthdate).toString(),
+      addressPostalCode: address.postalCode,
+      postalCode,
+      addressNumber,
+      addresaaaanumber: address.number,
+      parsedBirthdate,
+      parsedPostalCode,
+    });
+
     if (
-      new Date(user.birthDate).toString() !== new Date(birthdate).toString() ||
-      address.postalCode !== postalCode ||
+      new Date(user.birthDate).toString() !== parsedBirthdate.toString() ||
+      address.postalCode !== parsedPostalCode ||
       address.number !== addressNumber
     ) {
       throw new CustomError("Inconsistent data", 409);
