@@ -4,6 +4,7 @@ import { verify } from "jsonwebtoken";
 import { User, UserModel } from "models/user";
 import { Document } from "mongoose";
 import { CustomError } from "utils/error";
+import { parseAndValidateCPF } from "utils/validators";
 
 export const verifyTokenHandler: RequestHandler = async (req, res, next) => {
   try {
@@ -62,8 +63,10 @@ export const verifyChatTokenHandler: RequestHandler = async (
       throw new CustomError("User not found", 404);
     }
     const { userCPF } = req.params;
+
+    const parsedCpf = parseAndValidateCPF({ cpf: userCPF });
     console.log({ userCPF, cpf: user.cpf });
-    if (user.cpf !== userCPF) {
+    if (user.cpf !== parsedCpf) {
       throw new CustomError("Unauthorized", 401);
     }
 
