@@ -19,6 +19,15 @@ services:
       JWT_SECRET: vexo
       CHAT_JWT_SECRET: vexo-chat
       NODE_PATH: ./dist
+      CEL_CREDIT_AUTH_URL: https://sandbox.auth.flowfinance.com.br
+      CEL_CREDIT_PLATAFORM_URL: https://sandbox.platform.flowfinance.com.br
+      ORIGINATOR_ID: c80ac812-a573-471f-a6d8-9e506f60c966
+      ORIGINATOR_CREDENTIALS_ID: 73ap9qhpd9di6oup56lnf81jvq
+      ORIGINATOR_CREDENTIALS_SECRET: 1pc587kt6tg53fq4j63hchujvnffglqoblgtf8efg12oco5afu3j
+      FUNDING_ID: a99cb9ae-ae0c-452a-a6f4-e978b2420faf
+      FUNDING_CREDENTIALS_ID: 5gelt8icmushk9f84fsf6id8fo
+      FUNDING_CREDENTIALS_SECRET: 1q3f7kgiedc9r51luufdnd74fsu2q8l6p33g5ffdnrcu52ja559g
+      PRODUCT_ID: c6279505-95ed-4eb9-b9c7-fb7d85eb4a08
     depends_on:
       - vexo-database
     links:

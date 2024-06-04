@@ -1,6 +1,7 @@
 import { InferSchemaType, model, Schema, Types } from "mongoose";
+import { ILoanAgreement } from "./loanAgreement";
 
-enum InstallmentStatus {
+export enum InstallmentStatus {
   PENDING = "pending",
   OVERDUE = "overdue",
   PAID = "paid",
@@ -32,11 +33,28 @@ const installmentSchema = new Schema(
       type: Types.ObjectId,
       ref: "LoanAgreement",
     },
+    chargeCelcashId: {
+      type: String,
+    },
+    paymentLink: {
+      type: String,
+    },
   },
   { timestamps: true },
 );
 
 type Installment = InferSchemaType<typeof installmentSchema>;
+
+export interface IPopulatedInstallment {
+  amount: number;
+  dueDate: Date;
+  status: string;
+  paymentSlip: Types.ObjectId;
+  paymentSlips: Types.ObjectId[];
+  loanAgreement: ILoanAgreement;
+  chargeCelcashId: string;
+  paymentLink: string;
+}
 
 const InstallmentModel = model("Installment", installmentSchema);
 

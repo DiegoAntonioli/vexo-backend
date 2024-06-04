@@ -1,6 +1,6 @@
 import { InferSchemaType, model, Schema, Types } from "mongoose";
 
-enum PaymentSlipStatus {
+export enum PaymentSlipStatus {
   PENDING = "pending",
   OVERDUE = "overdue",
   NOT_COMPENSATED = "notCompensated",
@@ -9,8 +9,14 @@ enum PaymentSlipStatus {
   OVER_PAID = "overPaid",
   DUPLICITY = "duplicity",
   CANCELED = "canceled",
-  EXTRENAL_PAYMENT = "externalPayment",
+  EXTERNAL_PAYMENT = "externalPayment",
 }
+
+// active Ativa
+// canceled Cancelada
+// closed Encerrada
+// waitingPayment Aguardando pagamento
+// inactive Inativa
 
 const paymentSlipSchema = new Schema(
   {
@@ -69,6 +75,12 @@ const paymentSlipSchema = new Schema(
     reasonDenied: {
       type: String,
     },
+    transactions: [
+      {
+        type: Types.ObjectId,
+        ref: "Installment",
+      },
+    ],
   },
   { timestamps: true },
 );

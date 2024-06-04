@@ -1,4 +1,6 @@
 import { InferSchemaType, model, Schema, Types } from "mongoose";
+import { IAddress } from "./address";
+import { IPopulatedAddressUser } from "./user";
 
 const companySchema = new Schema(
   {
@@ -88,11 +90,66 @@ const companySchema = new Schema(
       type: Number,
       required: true,
     },
+    celcoinAccountId: {
+      type: String,
+      default: "",
+    },
+    celcashAccountId: {
+      type: String,
+      default: "",
+    },
+    celcoinCreditLineId: {
+      type: String,
+      default: "",
+    },
+    pix: {
+      keyType: {
+        type: String,
+        required: true,
+      },
+      key: {
+        type: String,
+        required: true,
+      },
+    },
   },
   { timestamps: true },
 );
 
 type Company = InferSchemaType<typeof companySchema>;
+
+export interface IPopulatedAddressCompany {
+  name: string;
+  cnpj: string;
+  managerPartner: IPopulatedAddressUser;
+  managerPartnerStartTimestamp: number;
+  managerPartnerHistory: {
+    managerPartner: Types.ObjectId;
+    startTimestamp: number;
+    endTimestamp: number;
+  }[];
+  managers: {
+    manager: Types.ObjectId;
+    active: boolean;
+    history: {
+      active: boolean;
+      timestamp: number;
+    }[];
+  }[];
+  phone: string;
+  address: IAddress;
+  employees: Types.ObjectId[];
+  employmentRelationHistory: Types.ObjectId[];
+  activeEmploymentRelations: Types.ObjectId[];
+  monthlyDueDay: number;
+  celcoinAccountId: string;
+  celcashAccountId: string;
+  celcoinCreditLineId: string;
+  pix: {
+    keyType: string;
+    key: string;
+  };
+}
 
 const CompanyModel = model("Company", companySchema);
 

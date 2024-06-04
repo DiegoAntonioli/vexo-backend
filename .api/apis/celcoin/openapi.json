@@ -1,0 +1,108 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CRÉDITO - AUTENTICAÇÃO",
+    "description": "CRÉDITO - AUTENTICAÇÃO",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://sandbox.auth.flowfinance.com.br",
+      "description": "Host Sandbox"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Autenticação"
+    }
+  ],
+  "paths": {
+    "/oauth2/token": {
+      "post": {
+        "security": [
+          {
+            "basicAuth": []
+          }
+        ],
+        "summary": "Obter token de autorização",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "title": "AuthenticationRequest",
+                "type": "object",
+                "properties": {
+                  "grant_type": {
+                    "type": "string",
+                    "enum": [
+                      "client_credentials"
+                    ],
+                    "default": "client_credentials"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Autenticação"
+        ],
+        "servers": [
+          {
+            "url": "https://sandbox.auth.flowfinance.com.br"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "AuthenticationToken",
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthenticationToken": {
+        "title": "AuthenticationToken",
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        }
+      },
+      "AuthenticationRequest": {
+        "title": "AuthenticationRequest",
+        "type": "object",
+        "properties": {
+          "grant_type": {
+            "type": "string",
+            "enum": [
+              "client_credentials"
+            ],
+            "default": "client_credentials"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "basicAuth": {
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  }
+}

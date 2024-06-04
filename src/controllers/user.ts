@@ -1,5 +1,6 @@
 import { env } from "envValidator";
 import { RequestHandler } from "express";
+import { createContract } from "helpers/celcoin";
 import { sign } from "jsonwebtoken";
 import { Address } from "models/address";
 import { AddressModel } from "models/address";
@@ -317,6 +318,30 @@ export const validateUserData: RequestHandler = async (req, res, next) => {
       OK: "OK",
     });
   } catch (err) {
+    next(err);
+  }
+};
+
+export const createContractHandler: RequestHandler = async (req, res, next) => {
+  const { userId } = req.params;
+  const { companyId, requestedAmount, installments } = req.body;
+
+  try {
+    const { createdLoanAgreement, createdInstallments } = await createContract({
+      userId,
+      companyId,
+      requestedAmount,
+      installments,
+      interestRate: 0.045,
+    });
+
+    res.status(201).json({
+      OK: "OK",
+      createdLoanAgreement,
+      createdInstallments,
+    });
+  } catch (err) {
+    console.log({ err });
     next(err);
   }
 };

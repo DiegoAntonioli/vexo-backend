@@ -36,6 +36,6 @@ app.use(((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
 }) as express.ErrorRequestHandler);
 
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+// app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 export default app;

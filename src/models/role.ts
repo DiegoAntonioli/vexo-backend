@@ -34,6 +34,15 @@ const roleSchema = new Schema(
 
 type Role = InferSchemaType<typeof roleSchema>;
 
+export interface IRole {
+  title: string;
+  field: string;
+  startDate: Date;
+  endDate: Date;
+  activeSalary: Types.ObjectId;
+  salaries: Types.ObjectId[];
+  employmentRelation: Types.ObjectId;
+}
 const RoleModel = model("Role", roleSchema);
 
 export { Role, RoleModel };

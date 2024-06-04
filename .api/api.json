@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "celcoin",
+      "source": "@celcoin/v2.0.0#3pywt1ullzxqrvg",
+      "integrity": "sha512-diBEQoznYcY7wPn5qrfGX0eSXRShwRrMdpIMecO7dm66/G9XLiBNoH25U2tIb3Nb6sTt5pZhSHuAdy2Rdo3yhA==",
+      "installerVersion": "6.1.1"
+    }
+  ]
+}
