@@ -24,6 +24,7 @@ export const webhooksHandler: RequestHandler = async (req, res, next) => {
       throw new CustomError("Unauthorized", 401);
     }
     console.log({ event, confirmHash, Transaction, Charge });
+    console.log(req.body);
     const result = await celcashWebhooks({
       event,
       transactionData: Transaction,

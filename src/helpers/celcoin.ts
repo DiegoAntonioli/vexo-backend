@@ -1930,13 +1930,55 @@ export const celcashWebhooks = async ({
       bankLine: string;
     };
   };
-  charge;
+  charge: {
+    galaxPayId: string;
+    myId: string;
+    mainPaymentMethodId: string;
+    value: number;
+    additionalInfo: string;
+    status: string;
+    Customer: {
+      galaxPayId: number;
+      myId: string;
+    };
+  };
 }) => {
   if (event === "transaction.updateStatus") {
+    const paymentSlipStatus =
+      transactionData.status === "payedBoleto"
+        ? PaymentSlipStatus.PAID
+        : transactionData.status === "payExternal"
+          ? PaymentSlipStatus.EXTERNAL_PAYMENT
+          : transactionData.status === "pendingBoleto"
+            ? PaymentSlipStatus.PENDING
+            : transactionData.status === "notCompensated"
+              ? PaymentSlipStatus.NOT_COMPENSATED
+              : transactionData.status === "lessValueBoleto"
+                ? PaymentSlipStatus.UNDER_PAID
+                : transactionData.status === "moreValueBoleto"
+                  ? PaymentSlipStatus.OVER_PAID
+                  : transactionData.status === "paidDuplicityBoleto"
+                    ? PaymentSlipStatus.DUPLICITY
+                    : transactionData.status === "cancel"
+                      ? PaymentSlipStatus.CANCELED
+                      : null;
+
     const paymentSlip = await PaymentSlipModel.findById(charge.myId);
     if (!paymentSlip) {
       throw new CustomError("Payment slip not found");
     }
+    const company = await CompanyModel.findById(charge.Customer.myId);
+    if (!company) {
+      throw new CustomError("Company not found");
+    }
+    const installments: (IPopulatedInstallment & MongooseDocument)[] =
+      await InstallmentModel.find({
+        _id: { $in: paymentSlip.installments },
+      });
+    let fullValue = 0;
+    installments.forEach((installment) => {
+      fullValue += installment.amount;
+    });
     const storedTransaction = await TransactionModel.findById(
       transactionData.myId,
     );
@@ -1960,11 +2002,42 @@ export const celcashWebhooks = async ({
         boleto: transactionData.Boleto,
       });
       paymentSlip.transactions.push(newTransaction);
+      paymentSlip.status = paymentSlipStatus;
       const [savedPaymentSlip, savedTransaction] = await Promise.all([
         paymentSlip.save(),
         newTransaction.save(),
       ]);
       console.log({ savedPaymentSlip, savedTransaction });
+      if (
+        paymentSlipStatus === PaymentSlipStatus.PAID ||
+        paymentSlipStatus === PaymentSlipStatus.EXTERNAL_PAYMENT
+      ) {
+        if (fullValue * 100 !== charge.value) {
+          throw new CustomError("FullValue doesn't match installments");
+        }
+        await Promise.all(
+          installments.map((installment) => {
+            installment.status = InstallmentStatus.PAID;
+            return installment.save();
+          }),
+        );
+      } else if (paymentSlipStatus === PaymentSlipStatus.PENDING) {
+        await Promise.all(
+          installments.map((installment) => {
+            if (installment.status === InstallmentStatus.PAID) return;
+            installment.status = InstallmentStatus.PENDING;
+            return installment.save();
+          }),
+        );
+      } else if (paymentSlipStatus === PaymentSlipStatus.NOT_COMPENSATED) {
+        await Promise.all(
+          installments.map((installment) => {
+            if (installment.status === InstallmentStatus.PAID) return;
+            installment.status = InstallmentStatus.OVERDUE;
+            return installment.save();
+          }),
+        );
+      }
       return { savedPaymentSlip, savedTransaction };
     } else {
       console.log({ storedTransaction });
@@ -1991,204 +2064,45 @@ export const celcashWebhooks = async ({
         )
       )
         paymentSlip.transactions.push(storedTransaction._id);
+      paymentSlip.status = paymentSlipStatus;
+
       const [savedPaymentSlip, savedTransaction] = await Promise.all([
         paymentSlip.save(),
         storedTransaction.save(),
       ]);
+      if (
+        paymentSlipStatus === PaymentSlipStatus.PAID ||
+        paymentSlipStatus === PaymentSlipStatus.EXTERNAL_PAYMENT
+      ) {
+        if (fullValue * 100 !== charge.value) {
+          throw new CustomError("FullValue doesn't match installments");
+        }
+        await Promise.all(
+          installments.map((installment) => {
+            installment.status = InstallmentStatus.PAID;
+            return installment.save();
+          }),
+        );
+      } else if (paymentSlipStatus === PaymentSlipStatus.PENDING) {
+        await Promise.all(
+          installments.map((installment) => {
+            if (installment.status === InstallmentStatus.PAID) return;
+            installment.status = InstallmentStatus.PENDING;
+            return installment.save();
+          }),
+        );
+      } else if (paymentSlipStatus === PaymentSlipStatus.NOT_COMPENSATED) {
+        await Promise.all(
+          installments.map((installment) => {
+            if (installment.status === InstallmentStatus.PAID) return;
+            installment.status = InstallmentStatus.OVERDUE;
+            return installment.save();
+          }),
+        );
+      }
       return { savedPaymentSlip, savedTransaction };
     }
-
-    //   {
-    //     "event": "transaction.updateStatus",
-    //     "webhookId": 450185575,
-    //     "confirmHash": "68a31d7565f7d823cdd54ad7ff59e821",
-    //     "Transaction": {
-    //         "myId": "pay-665e5005d7c759.96811506",
-    //         "galaxPayId": 1,
-    //         "chargeMyId": "12ASD",
-    //         "chargeGalaxPayId": 2,
-    //         "subscriptionMyId": "2A",
-    //         "subscriptionGalaxPayId": 1,
-    //         "value": 12999,
-    //         "payday": "2024-06-03",
-    //         "fee": 300,
-    //         "payedOutsideGalaxPay": false,
-    //         "additionalInfo": "Lorem ipsum dolor sit amet.",
-    //         "installment": 3,
-    //         "paydayDate": "2024-06-03",
-    //         "AbecsReasonDenied": {
-    //             "code": "51",
-    //             "message": "Saldo\/limite insuficiente"
-    //         },
-    //         "datetimeLastSentToOperator": "2024-06-03 20:21:42",
-    //         "status": "captured",
-    //         "tid": "pay-665e5006c71ed0.00953514",
-    //         "authorizationCode": "pay-665e5006d47206.02852814",
-    //         "reasonDenied": "Limite do cartão insuficiente.",
-    //         "createdAt": "2020-06-02 10:10:00",
-    //         "Boleto": {
-    //             "pdf": "https:\/\/app.celcoin.com.br\/link-pdf",
-    //             "bankLine": "23312323232323232323232323232"
-    //         },
-    //         "Pix": {
-    //             "qrCode": "ABC123ABC123ABC123ABC123ABC123ABC123ABC123ABC123ABC123ABC123ABC123",
-    //             "reference": "E2024060320214344A8DB75E068D70D0329EA5E0ED00413",
-    //             "image": "https:\/\/app.celcoin.com.br\/link-image-qrcode",
-    //             "page": "https:\/\/app.celcoin.com.br\/link-page-qrcode",
-    //             "endToEnd": "E2024060320214344A8DB75E068D70D0329EA5E0ED00413"
-    //         }
-    //     },
-    //     "Charge": {
-    //         "galaxPayId": 11,
-    //         "myId": "pay-665e500776b668.45110154",
-    //         "mainPaymentMethodId": "creditcard",
-    //         "value": 12999,
-    //         "additionalInfo": "Lorem ipsum dolor sit amet.",
-    //         "status": "active",
-    //         "Customer": {
-    //             "galaxPayId": 1,
-    //             "myId": "pay-665e5007c8ae37.63948426",
-    //             "phones": [
-    //                 3140201512,
-    //                 31983890110
-    //             ],
-    //             "name": "Lorem ipsum dolor sit amet.",
-    //             "document": "47504058416",
-    //             "createdAt": "2020-06-02 10:10:00",
-    //             "updatedAt": "2020-06-02 10:10:00",
-    //             "Address": "-"
-    //         },
-    //         "PaymentMethodCreditCard": {
-    //             "Card": {
-    //                 "galaxPayId": 1,
-    //                 "myId": "pay-665e50085033d5.83973202",
-    //                 "number": "5451*********1515",
-    //                 "createdAt": "2020-06-02 10:10:00",
-    //                 "updatedAt": "2020-06-02 10:10:00",
-    //                 "expiresAt": "2024-06"
-    //             }
-    //         },
-    //         "PaymentMethodBoleto": {
-    //             "fine": 100,
-    //             "interest": 200,
-    //             "instructions": "Lorem ipsum dolor sit amet."
-    //         },
-    //         "PaymentMethodPix": {
-    //             "fine": 100,
-    //             "interest": 200,
-    //             "instructions": "Lorem ipsum dolor sit amet.",
-    //             "Deadline": {
-    //                 "type": "days",
-    //                 "value": 60
-    //             }
-    //         }
-    //     }
-    // }
   } else if (event === "subscription.addTransaction") {
-    //   {
-    //     "event": "subscription.addTransaction",
-    //     "webhookId": 98724128,
-    //     "confirmHash": "9f0fe5ecfa055d2182d683d4ad1a512b",
-    //     "Transaction": {
-    //         "myId": "pay-665e500ed5c379.60460860",
-    //         "galaxPayId": 1,
-    //         "chargeMyId": "12ASD",
-    //         "chargeGalaxPayId": 2,
-    //         "subscriptionMyId": "2A",
-    //         "subscriptionGalaxPayId": 1,
-    //         "value": 12999,
-    //         "payday": "2024-06-03",
-    //         "payedOutsideGalaxPay": false,
-    //         "fee": 300,
-    //         "additionalInfo": "Lorem ipsum dolor sit amet.",
-    //         "installment": 3,
-    //         "authorizationCode": "pay-665e500f8ef712.48902194",
-    //         "paydayDate": "2024-06-03",
-    //         "tid": "pay-665e500fab5335.40813739",
-    //         "AbecsReasonDenied": {
-    //             "code": "51",
-    //             "message": "Saldo\/limite insuficiente"
-    //         },
-    //         "datetimeLastSentToOperator": "2024-06-03 20:21:51",
-    //         "status": "captured",
-    //         "reasonDenied": "Limite do cartão insuficiente.",
-    //         "createdAt": "2020-06-02 10:10:00",
-    //         "Boleto": {
-    //             "pdf": "https:\/\/app.celcoin.com.br\/link-pdf",
-    //             "bankLine": "23312323232323232323232323232"
-    //         },
-    //         "Pix": {
-    //             "qrCode": "ABC123ABC123ABC123ABC123ABC123ABC123ABC123ABC123ABC123ABC123ABC123",
-    //             "reference": "E20240603202152D264C5DFA354C6D4A7EEC09CCAAFC054",
-    //             "image": "https:\/\/app.celcoin.com.br\/link-image-qrcode",
-    //             "page": "https:\/\/app.celcoin.com.br\/link-page-qrcode"
-    //         }
-    //     },
-    //     "Subscription": [
-    //         {
-    //             "myId": "pay-665e5010754766.56241224",
-    //             "galaxPayId": 1,
-    //             "planMyId": "pay-665e501091d958.65729046",
-    //             "planGalaxPayId": 1,
-    //             "value": 12999,
-    //             "quantity": 12,
-    //             "periodicity": "monthly",
-    //             "firstPayDayDate": "2024-06-03",
-    //             "paymentLink": "https:\/\/app.celcoin.com.br\/link-payment",
-    //             "additionalInfo": "Lorem ipsum dolor sit amet.",
-    //             "status": "active",
-    //             "Customer": {
-    //                 "galaxPayId": 1,
-    //                 "myId": "pay-665e501127b8d3.98016121",
-    //                 "name": "Lorem ipsum dolor sit amet.",
-    //                 "document": "01697018246",
-    //                 "emails": [
-    //                     "teste8687email9315@galaxpay.com.br",
-    //                     "teste1705email1588@galaxpay.com.br"
-    //                 ],
-    //                 "phones": [
-    //                     3140201512,
-    //                     31983890110
-    //                 ],
-    //                 "createdAt": "2020-06-02 10:10:00",
-    //                 "updatedAt": "2020-06-02 10:10:00",
-    //                 "Address": {
-    //                     "zipCode": "30411330",
-    //                     "street": "Rua platina",
-    //                     "number": "1330",
-    //                     "complement": "2º andar",
-    //                     "neighborhood": "Prado",
-    //                     "city": "Belo Horizonte",
-    //                     "state": "MG"
-    //                 }
-    //             },
-    //             "PaymentMethodCreditCard": {
-    //                 "Card": {
-    //                     "myId": "pay-665e501212cb95.52210086",
-    //                     "galaxPayId": 1,
-    //                     "number": "5451*********1515",
-    //                     "createdAt": "2020-06-02 10:10:00",
-    //                     "updatedAt": "2020-06-02 10:10:00",
-    //                     "expiresAt": "2024-06"
-    //                 }
-    //             },
-    //             "PaymentMethodBoleto": {
-    //                 "fine": 100,
-    //                 "interest": 200,
-    //                 "instructions": "Lorem ipsum dolor sit amet."
-    //             },
-    //             "PaymentMethodPix": {
-    //                 "fine": 100,
-    //                 "interest": 200,
-    //                 "instructions": "Lorem ipsum dolor sit amet.",
-    //                 "Deadline": {
-    //                     "type": "days",
-    //                     "value": 60
-    //                 }
-    //             }
-    //         }
-    //     ]
-    // }
   }
 };
 
