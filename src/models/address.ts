@@ -43,6 +43,18 @@ const addressSchema = new Schema(
 
 type Address = InferSchemaType<typeof addressSchema>;
 
+export interface IAddress {
+  postalCode: string;
+  street: string;
+  number: string;
+  addressLine2: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  user: Types.ObjectId;
+  company: Types.ObjectId;
+}
+
 const AddressModel = model("Address", addressSchema);
 
 export { Address, AddressModel };

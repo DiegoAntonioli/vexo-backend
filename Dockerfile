@@ -1,6 +1,6 @@
 # Build the image as production
 # So we can minimize the size
-FROM node:latest
+FROM node:22-alpine
 
 ARG PORT
 ENV NODE_PATH=./dist

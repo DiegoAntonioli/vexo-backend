@@ -13,6 +13,11 @@ const accountSchema = new Schema(
     },
     pixKey: {
       type: String,
+      required: true,
+    },
+    pixType: {
+      type: String,
+      required: true,
     },
     user: {
       type: Types.ObjectId,
@@ -23,6 +28,15 @@ const accountSchema = new Schema(
 );
 
 type Account = InferSchemaType<typeof accountSchema>;
+
+export interface IAccount {
+  bank: number;
+  accountNumber: string;
+  agencyNumber: string;
+  pixKey: string;
+  pixType: string;
+  user: Types.ObjectId;
+}
 
 const AccountModel = model("Account", accountSchema);
 

@@ -1,5 +1,10 @@
 import { RequestHandler } from "express";
 import { readFileSync } from "fs";
+import {
+  cancelPaymentSlip,
+  createPaymentSlip,
+  getOpenInstallments,
+} from "helpers/celcoin";
 import { Account, AccountModel } from "models/account";
 import { Address, AddressModel } from "models/address";
 import { Company, CompanyModel } from "models/company";
@@ -25,9 +30,26 @@ import {
 export const createCompany: RequestHandler = async (req, res, next) => {
   try {
     const { user } = res.locals;
-    const { name, cnpj, managerPartner, phone, address, monthlyDueDay } =
-      req.body;
-
+    const {
+      name,
+      cnpj,
+      managerPartner,
+      phone,
+      address,
+      monthlyDueDay,
+      pixKey,
+      pixType,
+    } = req.body;
+    console.log({
+      name,
+      cnpj,
+      managerPartner,
+      phone,
+      address,
+      monthlyDueDay,
+      pixKey,
+      pixType,
+    });
     if (!user || user.userType !== UserType.ADMIN) {
       throw new CustomError("Unauthorized", 401);
     }
@@ -132,8 +154,19 @@ export const createCompany: RequestHandler = async (req, res, next) => {
       phone,
       address: newCompanyAddress._id,
       monthlyDueDay,
+      pix: { key: pixKey, keyType: pixType },
     });
 
+    console.log({
+      name: name.toLowerCase(),
+      cnpj,
+      managerPartner: managerPartnerUser._id,
+      managerPartnerStartTimestamp: new Date().valueOf(),
+      phone,
+      address: newCompanyAddress._id,
+      monthlyDueDay,
+      pix: { key: pixKey, keyType: pixType },
+    });
     newCompanyAddress.company = newCompany._id;
     managerPartnerUser.managerPartnerCompanies.push({
       company: newCompany._id,
@@ -211,9 +244,10 @@ interface IEmployeeData {
   eligibleToCredit?: boolean;
   creditLimit?: number;
   accountBankNumber?: number;
-  accountNumber?: number;
+  accountNumber?: string;
   agencyNumber?: number;
   pixKey?: string;
+  pixType?: string;
   dataIndex: number;
 }
 // "managerPartnerId": "66105ace4b43028bc48c7ac1",
@@ -299,6 +333,7 @@ export const createEmploymentRelation = async ({
         accountNumber: employeeData.accountNumber,
         agencyNumber: employeeData.agencyNumber,
         pixKey: employeeData.pixKey,
+        pixType: employeeData.pixType,
         user: user._id,
       });
       const employmentRelation = new EmploymentRelationModel({
@@ -416,7 +451,8 @@ export const registerCompanyEmployees: RequestHandler = async (
     const employeesCPF: { [key: string]: number } = {};
 
     workSheetsData.slice(1).forEach((data, index) => {
-      if (!data.length) return;
+      if (!data.length || !data[4]) return;
+      console.log({ data });
       const phone = parseAndValidatePhone({ phone: data[4].toString() });
       const cpf = parseAndValidateCPF({ cpf: data[6].toString() });
       const birthDate = parseAndValidateDate({ date: data[7].toString() });
@@ -445,7 +481,7 @@ export const registerCompanyEmployees: RequestHandler = async (
         return;
       }
 
-      console.log({ data });
+      console.log({ data, phone });
 
       const employee = {
         firstName: data[0] ? data[0].toLowerCase().trim() : "",
@@ -479,9 +515,10 @@ export const registerCompanyEmployees: RequestHandler = async (
           : false,
         creditLimit: creditLimit ? parseInt(creditLimit) : 0,
         accountBankNumber: accountBankNumber ? parseInt(accountBankNumber) : 0,
-        accountNumber: accountNumber ? parseInt(accountNumber) : 0,
+        accountNumber: accountNumber ? accountNumber : "",
         agencyNumber: agencyNumber ? parseInt(agencyNumber) : 0,
         pixKey: data[41] ? data[41].toString().toLowerCase().trim() : "",
+        pixType: data[42] ? data[42].toString().toLowerCase().trim() : "",
         dataIndex: index,
       };
       console.log({ employee });
@@ -560,6 +597,52 @@ export const validateCompany: RequestHandler = async (req, res, next) => {
     res
       .status(200)
       .json({ OK: "OK", companyRegistered: company ? true : false });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getCompanyInstallmentsHandler: RequestHandler = async (
+  req,
+  res,
+  next,
+) => {
+  try {
+    const { companyId } = req.params;
+    // const { installmentIds } = req.body;
+    const { year, month } = req.query;
+    const result = await getOpenInstallments({
+      companyId,
+      year: year && typeof year == "string" ? year : undefined,
+      month: month && typeof month == "string" ? month : undefined,
+    });
+    console.log({ result });
+    res.status(200).json({ result });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const createPaymentSlipHandler: RequestHandler = async (
+  req,
+  res,
+  next,
+) => {
+  try {
+    const { companyId } = req.params;
+    const { installmentIds } = req.body;
+    const result = await createPaymentSlip({ companyId, installmentIds });
+    res.status(200).json({ result });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const cancelPaymentSlipHandler = async (req, res, next) => {
+  try {
+    const { paymentSlipId } = req.params;
+    const result = await cancelPaymentSlip({ paymentSlipId });
+    res.status(200).json({ result });
   } catch (err) {
     next(err);
   }

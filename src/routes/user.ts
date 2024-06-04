@@ -2,6 +2,7 @@ import express, { RequestHandler } from "express";
 
 import {
   calculator,
+  createContractHandler,
   isUserRegistered,
   optIn,
   patchPhone,
@@ -243,6 +244,41 @@ userRouter.post(
   "/:userCPF/verify-user",
   verifyChatTokenHandler,
   validateUserData,
+  /*
+  #swagger.security = [{
+    "bearerAuth": []
+  }]
+  #swagger.parameters['userCPF'] = {
+    in: "path",
+    required: true
+  }
+  #swagger.requestBody = {
+    required: true,
+    content: {
+      "application/json": {
+        schema: {
+          $ref: "#/components/schemas/validateUserDataBody"
+        }  
+      }
+    }
+  }
+  #swagger.responses[201] = {
+    description: "Success",
+    content: {
+      "application/json": {
+        schema: {
+          $ref: '#/components/schemas/validateUserDataRes'
+        }
+      }
+    }
+  }
+  */
+);
+
+userRouter.post(
+  "/:userId/create-contract",
+  // verifyChatTokenHandler,
+  createContractHandler,
   /*
   #swagger.security = [{
     "bearerAuth": []
